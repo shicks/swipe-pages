@@ -36,7 +36,7 @@
     easingFunction = easingFunction || "ease-out";
     var transition =
         (isWebkit ? "-webkit-" : "") + "transform " +
-        duration.toString() + "s " + easingFunction;
+        duration + "s " + easingFunction;
     setTransition(transition, element);
   };
 
@@ -57,7 +57,7 @@
   };
 
   var moveToPosition = function(position, element) {
-    var transform = "translateX(" + position.toString() + "%)";
+    var transform = "translateX(" + position + "%)";
     setTransform(transform, element);
   };
 
@@ -111,6 +111,7 @@
             ""  + (positionArray[i] / this.pageCount) + "%";
       }
     },
+
     resetWidths: function() {
       this.$.pagesContainer.style.width = "" + (100 * this.pageCount) + "%";
       for (var i = 0; i < this.pageCount; i++){
@@ -119,6 +120,11 @@
     },
 
     trackHandler: function(event) {
+      if (this.selected == null) {
+        if (!this.items.length) return;
+        this.selectIndex(0);
+      }
+
       var index = this.indexOf(this.selectedItem);
       var isFirstPage = (index === 0);
       var isLastPage  = (index === (this.pageCount - 1));

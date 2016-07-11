@@ -18,22 +18,18 @@ THE SOFTWARE.
 -->
 
 <!--
-Provides horizontally swipeable pages.
-The `swipe-pages` element must have `swipe-page` elements as its children.
-This ensures readibility of code and a given amount of control on the behavior
-of individual pages.
-A `swipe-pages` element is an element containing several `swipe-page` elements
-as subviews. The `swipe-pages` element is given a certain width and height
-through CSS and then each individual `swipe-page` will automatically take of the full size
-of the parent element. This means that the `swipe-page` elements are assumed
-to all have the exact same size which they all derive from the `swipe-pages`
-element.
+Provides a horizontally swipeable drop-in replacement for `iron-pages`.
+Due to the way the individual pages must control their width and
+horizontal position for swiping to work, it is prudent to avoid
+setting position-relevant styles on top-level children.
+
 ###Example:
-    <swipe-pages selected = "1">
-      <swipe-page>Hey I'm page 0</swipe-page>
-      <swipe-page><h1>Hi, I'm on page 1</h1></swipe-page>
-      <swipe-page><p>I am page 2 and I totally rock!</p></swipe-page>
+    <swipe-pages selected="1">
+      <div>Hey I'm page 0</div-page>
+      <h1>Hi, I'm on page 1</h1>
+      <p>I am page 2 and I totally rock!</p>
     </swipe-pages>
+
 Swiping left moves to the next page while swiping right moves to the previous page.
 This behavior is very typical on mobile applications.
 The key to this element is that when swiping, the page follows your finger
@@ -41,11 +37,13 @@ horizontally so as to give the user immediate feedback that he/she is swiping
 between pages.
 Pages only transition when the swipe gesture has crossed a certain threshold
 which is exposed by the `threshold` attribute.
+
 ###Example:
-    <swipe-pages threshold = "0.5">
-      <swipe-page> ... </swipe-page>
-      <swipe-page> ... </swipe-page>
+    <swipe-pages threshold="0.5">
+      <div> ... </div>
+      <div> ... </div>
     </swipe-pages>
+
 By setting the `threshold` to 0.5, you ensure that the page will only transition
 if the swipe gesture has crossed half the `swipe-pages` width horizontally.
 `threshold` accepts values between 0 and 1.
@@ -53,18 +51,17 @@ A `threshold` value of 0 implies that any swipe gesture will cause a page
 transition. A `threshold` value of 1 implies that no page transition is possible
 as you must cross more that the entire size of the `swipe-pages` element horizontally
 which is impossible given that the size of the `swipe-pages` element is well-defined.
+
 @class swipe-pages
 @blurb Provides horizontally swipeable pages.
 @status alpha
 -->
 
 <link rel="import" href="../polymer/polymer.html">
-
 <link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
 <link rel="import" href="../iron-selector/iron-selectable.html">
 
 <dom-module id="swipe-pages">
-
   <template>
     <style>
       :host, .pagesContainer {
@@ -88,8 +85,6 @@ which is impossible given that the size of the `swipe-pages` element is well-def
         position: relative;
       }
 
-      /* The following are swiped from swipe-page... */
-
       .pagesContainer > ::content > * {
         display: block;
         position: absolute;
@@ -108,15 +103,10 @@ which is impossible given that the size of the `swipe-pages` element is well-def
         backface-visibility: hidden;
         transform: scale(1);
       }
-
     </style>
-
     <div id="pagesContainer" class="pagesContainer">
       <content id="pages" select="*"></content>
     </div>
-
   </template>
-
   <script src="swipe-pages.js"></script>
-
 </dom-module>
