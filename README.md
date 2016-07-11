@@ -1,17 +1,20 @@
 swipe-pages
 ================
 
-See the [component page](http://TheSeamau5.github.io/swipe-pages) for more information.
+See the [component page](http://shicks.github.io/swipe-pages) for
+more information.
+
+Note that this version is specifically **not compatible** with the
+version it was forked from.  Specifically, the `<swipe-page>`
+element has been removed and compatibility with `<iron-pages>`
+has been added.
 
 
 ## TODO
 
-- [x] Improve page scroll stability
-- [x] Improve page scroll performance
-- [ ] Improve performance in swiping between pages (by reusing pages?)
-- [x] Have pages scroll down independently of each other
-- [ ] Make element play nicer with the polymer core-elements (like core-scroll-header-panel and core-list)
-- [ ] Add option to mark each page with a browser tag to resume state from url
+- [ ] All wraparound scrolling via some clever tricks
+- [ ] Save and restore the scroll vertical position of each page
+- [x] Make element play nicer with the polymer core-elements
 - [x] Include sane defaults for hardware acceleration (translateZ hack in the right places)
 - [ ] Make a nicer demo with more features to better explain the element
 - [ ] Add option to reverse direction for rtl languages
@@ -22,14 +25,17 @@ See the [component page](http://TheSeamau5.github.io/swipe-pages) for more infor
 ## Installation
 With Bower:
 
-    bower install swipe-pages
+```shell
+bower install shicks/swipe-pages
+```
 
 ## Basic Example
 
-    <swipe-pages>
-      <swipe-page>I am page 0<swipe-page>
-      <swipe-page>I am page 1<swipe-page>
-      <swipe-page>I am page 2<swipe-page>
-    </swipe-pages>
+```html
+<swipe-pages selected="foo" attr-for-selected="name">
+  <div name="foo">I am page 0</div>
+  <div name="bar">I am page 1</div>
+  <div name="baz">I am page 2</div>
+</swipe-pages>
+```
 
-    
