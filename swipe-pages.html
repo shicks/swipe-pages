@@ -78,7 +78,7 @@ which is impossible given that the size of the `swipe-pages` element is well-def
       }
 
       .pagesContainer{
-        overflow-x : hidden;
+        overflow-x: hidden;
         overflow-y: hidden;
         background-color: rgba(255,255,255,0);
         transform: translateZ(0);
@@ -101,8 +101,10 @@ which is impossible given that the size of the `swipe-pages` element is well-def
         overflow-y: auto;
         background-color: rgba(255,255,255,0);
 
-        /*This is for a bug in chrome where pages flash white. Why? I dunno.
-          But, these two lines solve the problem... so... DO NOT TOUCH THIS!*/
+        /*
+         * This is for a bug in chrome where pages flash white. Why? I dunno.
+         * But, these two lines solve the problem... so... DO NOT TOUCH THIS!
+         */
         backface-visibility: hidden;
         transform: scale(1);
       }

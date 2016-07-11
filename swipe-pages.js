@@ -20,58 +20,52 @@
 
   var isWebkit = document.body.style.webkitTransform !== undefined;
 
-  var getPositionArray = function(length){
+  var getPositionArray = function(length) {
     var a = [];
-    for (var i = 0; i < length; i++){
+    for (var i = 0; i < length; i++) {
       a[i] = (i * 100);
     }
     return a;
   };
 
-  var resetAnimations = function(element){
+  var resetAnimations = function(element) {
     setTransition("", element);
   };
 
-  var setAnimationDuration = function(duration, element, easingFunction){
+  var setAnimationDuration = function(duration, element, easingFunction) {
     easingFunction = easingFunction || "ease-out";
-    var transition = (isWebkit ? "-webkit-" : "") + "transform " + duration.toString() + "s " + easingFunction;
+    var transition =
+        (isWebkit ? "-webkit-" : "") + "transform " +
+        duration + "s " + easingFunction;
     setTransition(transition, element);
   };
 
-  var setTransition = function(transition, element){
+  var setTransition = function(transition, element) {
     if (isWebkit){
       element.$.pagesContainer.style.webkitTransition = transition;
-    }else{
+    } else {
       element.$.pagesContainer.style.transition = transition;
     }
   };
 
-  var setTransform = function(transform, element){
-    if (isWebkit){
+  var setTransform = function(transform, element) {
+    if (isWebkit) {
       element.$.pagesContainer.style.webkitTransform = transform;
-    }else{
+    } else {
       element.$.pagesContainer.style.transform = transform;
     }
   };
 
-  var moveToPosition = function(position, element){
-    var transform = "translateX(" + position.toString() + "%)";
+  var moveToPosition = function(position, element) {
+    var transform = "translateX(" + position + "%)";
     setTransform(transform, element);
   };
 
-  var moveToPage = function(pageNumber, element){
-    //var pageNumber = typeof page == number ? page : this.indexOf(this.selectedItem)
-    console.log('moveToPage ' + pageNumber);
+  var moveToPage = function(pageNumber, element) {
     var position = -pageNumber * 100 / element.pageCount;
     moveToPosition(position, element);
   };
-/*
-  var resetScrollTop = function(element){
-    if (element) {
-      element.$.pageContainer.scrollTop = 0;
-    }
-  };
-*/
+
   Polymer({
     is: 'swipe-pages',
 
@@ -89,28 +83,36 @@
       threshold: 0.3,
       transitionDuration: 0.3
     },
+
     listeners: {
       'track': 'trackHandler'
     },
+
     observers: [
       'selectedChanged(selected, items)'
     ],
-    get pageCount(){
+
+    get pageCount() {
       return Polymer.dom(this.$.pages).getDistributedNodes().length;
     },
-    get pages(){
+
+    get pages() {
       return Polymer.dom(this.$.pages).getDistributedNodes();;
     },
-    get pageWidth(){
+
+    get pageWidth() {
       return this.getBoundingClientRect().width;
     },
-    resetPositions : function(){
+
+    resetPositions: function() {
       var positionArray = getPositionArray(this.pageCount);
       for (var i = 0; i < this.pageCount; i++){
-        this.pages[i].style.left = ""  + (positionArray[i] / this.pageCount) + "%";
+        this.pages[i].style.left =
+            ""  + (positionArray[i] / this.pageCount) + "%";
       }
     },
-    resetWidths : function(){
+
+    resetWidths: function() {
       this.$.pagesContainer.style.width = "" + (100 * this.pageCount) + "%";
       for (var i = 0; i < this.pageCount; i++){
         this.pages[i].style.width = "" + (100 / this.pageCount) + "%";
@@ -118,64 +120,61 @@
     },
 
     trackHandler: function(event) {
+      if (this.selected == null) {
+        if (!this.items.length) return;
+        this.selectIndex(0);
+      }
+
       var index = this.indexOf(this.selectedItem);
       var isFirstPage = (index === 0);
       var isLastPage  = (index === (this.pageCount - 1));
+      var swipingLeft = (event.detail.dx < 0);
+      var swipingRight = (event.detail.dx > 0);
+      var swipingOutOfBounds =
+          (swipingRight && isFirstPage) || (swipingLeft && isLastPage);
+      var thresholdWasCrossed =
+          (Math.abs(event.detail.dx) / this.pageWidth) > this.threshold;
+          
       switch (event.detail.state) {
         case 'start':
+
           resetAnimations(this);
           break;
 
         case 'track':
 
-          var userIsSwipingLeftwards = (event.detail.dx < 0);
-          var userIsSwipingRightwards = (event.detail.dx > 0);
-
-          var tryingToSwipeToLeftOfFirstPage = userIsSwipingRightwards && isFirstPage;
-          var tryingToSwipeToRightOfLastPage = userIsSwipingLeftwards && isLastPage;
-
-          var tryingToSwipeToOutOfBoundsPage = tryingToSwipeToLeftOfFirstPage || tryingToSwipeToRightOfLastPage;
-
-          if (!tryingToSwipeToOutOfBoundsPage){
-            var position = -(index - (event.detail.dx / this.pageWidth)) * 100 / this.pageCount;
+          if (!swipingOutOfBounds) {
+            var position =
+                -(index - (event.detail.dx / this.pageWidth)) * 100 /
+                this.pageCount;
             moveToPosition(position, this);
           }
-          break
+          break;
 
         case 'end':
-          var userIsSwipingLeftwards = (event.detail.dx < 0);
-          var userIsSwipingRightwards = (event.detail.dx > 0);
 
-          var thresholdWasCrossed = (Math.abs(event.detail.dx) / this.pageWidth) > this.threshold;
           setAnimationDuration(this.getAttribute('transitionDuration'), this);
-
-          if (thresholdWasCrossed){
-            if (userIsSwipingRightwards && !isFirstPage){
-              this.selectPrevious();
-            }
-            if (userIsSwipingLeftwards && !isLastPage){
-              this.selectNext();
-            }
-          }else{
+          if (thresholdWasCrossed) {
+            // Switch page
+            if (swipingRight && !isFirstPage) this.selectPrevious();
+            if (swipingLeft && !isLastPage) this.selectNext();
+          } else {
+            // Otherwise reset
             moveToPage(index, this);
           }
-          break
+          break;
       }
     },
-
-
 
     selectedChanged: function() {
       if (!this.items.length) return;
       // Note: we need to do this later since the callback fires
       // before this.selectedItem is set.
       // TODO(sdh): consider using Promise.resolve().then()
-      window.setTimeout(function(){
+      window.setTimeout(function() {
         var newValue = this.indexOf(this.selectedItem);
-        if (newValue >= this.pageCount || newValue < 0){
-          throw new Error(
-              "Page " + newValue + " is not a defined page. There are only " +
-              this.pageCount + " pages.");
+        if (newValue < 0) {
+          throw new Error("Page " + this.selectedItem + " not defined.");
         }
         moveToPage(newValue, this);
       }.bind(this), 0);
@@ -185,9 +184,7 @@
       this.resetPositions();
       this.resetWidths();
     }
-
   });
-
 })();
 
 
