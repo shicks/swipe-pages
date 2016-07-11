@@ -12,7 +12,7 @@ has been added.
 
 ## TODO
 
-- [ ] All wraparound scrolling via some clever tricks
+- [ ] Allow wraparound scrolling via some clever tricks
 - [ ] Save and restore the scroll vertical position of each page
 - [x] Make element play nicer with the polymer core-elements
 - [x] Include sane defaults for hardware acceleration (translateZ hack in the right places)
