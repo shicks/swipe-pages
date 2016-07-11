@@ -19,7 +19,9 @@ has been added.
 - [ ] Make a nicer demo with more features to better explain the element
 - [ ] Add option to reverse direction for rtl languages
 - [ ] Do some more rigorous testing to ensure stability!!!
-- [ ] Allow for individual pages to be created dynamically. 
+- [ ] Allow for individual pages to be created dynamically
+- [ ] Integrate with `iron-swipeable-pages`
+- [ ] Make sure scrolling actually works at all
 
 
 ## Installation
